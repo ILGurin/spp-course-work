@@ -1,0 +1,18 @@
+spring:
+  application:
+    name: cloud
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/cloud
+    username: postgres
+    password: admin
+
+  jpa:
+    show-sql: true
+    properties:
+      hibernate.hibernate.format_sql: true
+
+jwt:
+  secret:
+    access: 0bd6f04ed6ace855d7358b1fe48a246dab9d70797695675f8ea889f5cc27af14
+    refresh: d2bf41a77edb9aeb7ba0ecb7c8638006c02f43bf4add0ca9ae94178f2e7b3e54
