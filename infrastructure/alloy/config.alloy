@@ -1,0 +1,37 @@
+// Отправка логов в Loki. Логи пушатся в Loki API по адресу http://loki:3100/loki/api/v1/push
+loki.write "local" {
+    endpoint {
+        url = "http://loki:3100/loki/api/v1/push"
+    }
+}
+
+// Обнаружение Docker-контейнеров
+// Сканирует Docker через сокет unix:///var/run/docker.sock. Обновление списка контейнеров каждые 5 секунд
+discovery.docker "containers" {
+    host                = unix:///var/run/docker.sock
+    refresh_interval    = 5s
+}
+
+
+// Извлекает имя контейнера -> "container"
+// Добавляет статические метки: "job=docker", "host=<hostname>"
+// Создаёт метку "service" из имени контейнера
+// Добавляет метку "stream" (stdout/stderr)
+discovery.relabel "containers" {
+    targets = discovery.docker.containers.targets
+
+    rule {
+        source_labels   = ["__meta_docker_container_name"]
+        regex           = "/(.*)"
+        target_label    "container"
+    }
+
+    rule {
+        target_label    = "job"
+        replacement     = "docker"
+    }
+
+    rule {
+
+    }
+}
