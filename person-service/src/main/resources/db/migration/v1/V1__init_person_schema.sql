@@ -15,7 +15,6 @@ CREATE TABLE person.individuals
     active          boolean                     NOT NULL DEFAULT TRUE,
     created         TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT (now() AT TIME ZONE 'utc'),
     updated         TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT (now() AT TIME ZONE 'utc'),
-    passport_number VARCHAR(64)                 NOT NULL,
     phone_number    VARCHAR(64)                 NOT NULL,
     user_id         UUID                        NOT NULL REFERENCES person.users (id)
 );

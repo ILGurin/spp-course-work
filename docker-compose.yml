@@ -56,7 +56,7 @@ services:
   keycloak:
     image: quay.io/keycloak/keycloak:26.2
     container_name: individuals-keycloak
-    command: start-dev --import-realm --metrics-enabled=true # Указываем, что при старте контейнера Keycloak мы будем импортировать подготовленный realm c необходимыми настройками
+    command: sh -c "apt-get update && apt-get install -y curl && exec start-dev --import-realm --metrics-enabled=true" # Указываем, что при старте контейнера Keycloak мы будем импортировать подготовленный realm c необходимыми настройками
     ports:
       - "8080:8080"
       - "9000:9000"
@@ -75,7 +75,7 @@ services:
     depends_on:
       keycloak-postgres:
         condition: service_healthy
-    healthcheck: #TODO установить curl
+    healthcheck:
       test: [ "CMD-SHELL", "curl -fsS http://localhost:9000/health/ready || exit 1" ]
       interval: 10s
       timeout: 5s

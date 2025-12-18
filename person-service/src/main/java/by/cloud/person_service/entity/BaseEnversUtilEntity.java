@@ -10,7 +10,7 @@ import org.hibernate.envers.RevisionTimestamp;
 @Table(name = "revinfo", schema = "person_history")
 public class BaseEnversUtilEntity {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @RevisionNumber
     @Column(name = "rev")
     private long rev;

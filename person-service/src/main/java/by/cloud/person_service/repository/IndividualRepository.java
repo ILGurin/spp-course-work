@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.UUID;
 
 public interface IndividualRepository extends JpaRepository<Individual, UUID> {
-    @Query("FROM Individual i WHERE (:email) IS NULL OR i.user.email IN :emails")
+    @Query("FROM Individual i WHERE (:emails) IS NULL OR i.user.email IN :emails")
     List<Individual> findAllByEmails(@Param("emails") List<String> emails);
 
     @Modifying
