@@ -56,7 +56,7 @@ services:
   keycloak:
     image: quay.io/keycloak/keycloak:26.2
     container_name: individuals-keycloak
-    command: sh -c "apt-get update && apt-get install -y curl && exec start-dev --import-realm --metrics-enabled=true" # Указываем, что при старте контейнера Keycloak мы будем импортировать подготовленный realm c необходимыми настройками
+    command: start-dev --import-realm --metrics-enabled=true # Указываем, что при старте контейнера Keycloak мы будем импортировать подготовленный realm c необходимыми настройками
     ports:
       - "8080:8080"
       - "9000:9000"
@@ -74,6 +74,8 @@ services:
       - ./infrastructure/keycloak/realm-config.json:/opt/keycloak/data/import/realm-config.json
     depends_on:
       keycloak-postgres:
+        condition: service_healthy
+      nexus:
         condition: service_healthy
     healthcheck:
       test: [ "CMD-SHELL", "curl -fsS http://localhost:9000/health/ready || exit 1" ]
@@ -182,6 +184,50 @@ services:
       interval: 10s
       timeout: 5s
       retries: 10
+
+  persons-api:
+    build:
+      context: ./person-service
+      dockerfile: Dockerfile
+    container_name: persons-api
+    ports:
+      - "8092:8092"
+    working_dir: /app
+    environment:
+      POSTGRES_HOST: person-postgres
+      POSTGRES_PORT: 5432
+      SPRING_PROFILES_ACTIVE: docker
+      OTLP_EXPORTER_ENDPOINT: http://tempo:4318
+    depends_on:
+      person-postgres:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD", "curl", "-i", "http://localhost:8092/actuator/health" ]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
+  api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    container_name: api
+    environment:
+      KEYCLOAK_URL: http://keycloak:8080
+      SPRING_PROFILES_ACTIVE: docker
+      PERSONS_API_HOST: persons-api
+      PERSONS_API_URL: http://persons-api:8092
+      OTLP_EXPORTER_ENDPOINT: http://tempo:4318
+    ports:
+      - "8091:8091"
+    depends_on:
+      persons-api:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD-SHELL", "curl", "-fsS http://localhost:8091/actuator/health || exit 1" ]
+      interval: 10s
+      timeout: 5s
+      retries: 30
 
 volumes:
   artifacts:

@@ -291,7 +291,7 @@ publishing {
 
 				create<MavenPublication>("publish${name.replaceFirstChar(Char::uppercase)}Jar") {
 					artifact(jarFile)
-					groupId = "net.proselyte"
+					groupId = "by.cloud"
 					artifactId = jarBaseName
 					version = "1.0.0-SNAPSHOT"
 
