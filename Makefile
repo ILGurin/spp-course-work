@@ -21,7 +21,7 @@ up:
 	@echo "Nexus is healthy!"
 
 build-artifacts:
-	@$(DOCKER_COMPOSE) build persons-api --no-cache
+	@$(DOCKER_COMPOSE) build persons-api files-api --no-cache
 
 start:
 	$(DOCKER_COMPOSE) up -d
