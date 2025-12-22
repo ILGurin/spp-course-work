@@ -20,6 +20,7 @@ import javax.validation.Valid;
 @RequiredArgsConstructor
 @Validated
 @RequestMapping("/v1/auth")
+@CrossOrigin
 public class AuthRestControllerV1 {
 
     private final UserService userService;
