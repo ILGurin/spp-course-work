@@ -4,6 +4,12 @@ server:
 spring:
   application:
     name: file-service
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 50MB
+      max-request-size: 50MB
+      file-size-threshold: 2KB
   datasource:
     url: jdbc:postgresql://${POSTGRES_HOST:localhost}:${POSTGRES_PORT:5435}/file
     username: postgres
@@ -36,10 +42,6 @@ spring:
           hbm2ddl:
             auto: validate
     database-platform: org.hibernate.dialect.PostgreSQLDialect
-  data:
-    redis:
-      host: ${REDIS_HOST:localhost}
-      port: ${REDIS_PORT:6379}
 
 minio:
   endpoint: ${MINIO_ENDPOINT:http://localhost:9002}

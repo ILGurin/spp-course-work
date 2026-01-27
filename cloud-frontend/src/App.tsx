@@ -11,7 +11,7 @@ function FolderView() {
 
   useEffect(() => {
     if (id) {
-      navigate(`/files?folderId=${id}`, { replace: true });
+      navigate(`/files?directoryId=${id}`, { replace: true });
     }
   }, [id, navigate]);
 
@@ -24,25 +24,34 @@ function FileDownload() {
 
   useEffect(() => {
     if (id) {
-      // Получаем ссылку на файл и перенаправляем
       const token = localStorage.getItem('token');
       if (!token) {
         navigate('/login');
         return;
       }
 
-      fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8091'}/v1/files/${id}/download`, {
+      // Скачиваем файл напрямую
+      fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8091'}/v1/files/download/${id}`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
       })
-        .then(res => res.json())
-        .then(data => {
-          if (data.link) {
-            window.location.href = data.link;
-          } else {
-            navigate('/files');
+        .then(res => {
+          if (res.ok) {
+            return res.blob();
           }
+          throw new Error('Failed to download');
+        })
+        .then(blob => {
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `file-${id}`;
+          document.body.appendChild(a);
+          a.click();
+          window.URL.revokeObjectURL(url);
+          document.body.removeChild(a);
+          navigate('/files');
         })
         .catch(() => navigate('/files'));
     }

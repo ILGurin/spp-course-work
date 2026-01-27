@@ -30,6 +30,15 @@ spring:
       resourceserver:
         jwt:
           issuer-uri: ${application.keycloak.serverUrl}/realms/${application.keycloak.realm}
+  codec:
+    max-in-memory-size: 50MB
+  webflux:
+    multipart:
+      max-in-memory-size: 50MB
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
 
 auth:
   name: ${AUTH_API_NAME:auth}
@@ -42,6 +51,28 @@ users:
 person:
   name: ${PERSONS_API_NAME:person}
   url: ${PERSONS_API_URL:http://localhost:8092}
+
+file:
+  name: ${FILE_API_NAME:file}
+  url: ${FILE_API_URL:http://localhost:8093}
+
+directory:
+  name: ${DIRECTORY_API_NAME:directory-api}
+  url: ${FILE_API_URL:http://localhost:8093}
+
+feign:
+  client:
+    config:
+      file-api:
+        url: ${file.url}
+        connectTimeout: 60000
+        readTimeout: 60000
+      directory-api:
+        url: ${directory.url}
+  httpclient:
+    max-connections: 200
+    max-connections-per-route: 50
+    connection-timeout: 60000
 
 logging:
   config: "classpath:logback.xml"

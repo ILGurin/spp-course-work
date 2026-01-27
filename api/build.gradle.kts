@@ -4,6 +4,8 @@ import org.gradle.api.tasks.SourceSetContainer
 
 val versions = mapOf(
 	"personApiVersion" to "1.0.0-SNAPSHOT",
+	"fileApiVersion" to "1.0.0-SNAPSHOT",
+	"directoryApiVersion" to "1.0.0-SNAPSHOT",
 	"keycloakAdminClientVersion" to "22.0.3",
 	"springdocOpenapiStarterWebfluxUiVersion" to "2.5.0",
 	"mapstructVersion" to "1.5.5.Final",
@@ -59,6 +61,8 @@ configurations.all {
 
 dependencies {
 	implementation("by.cloud:person-api:${versions["personApiVersion"]}")
+	implementation("by.cloud:file-api:${versions["fileApiVersion"]}")
+	implementation("by.cloud:directory-api:${versions["directoryApiVersion"]}")
 
 	implementation("org.springframework.boot:spring-boot-starter-actuator")
 	implementation("io.micrometer:micrometer-registry-prometheus")
@@ -67,6 +71,7 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
 	implementation("org.keycloak:keycloak-admin-client:${versions["keycloakAdminClientVersion"]}")
 	implementation("org.springframework.boot:spring-boot-starter-webflux")
+	implementation("org.springframework.boot:spring-boot-starter-data-redis-reactive")
 
 	implementation("org.springdoc:springdoc-openapi-starter-webflux-ui:${versions["springdocOpenapiStarterWebfluxUiVersion"]}")
 	implementation("org.springframework.boot:spring-boot-starter-validation")

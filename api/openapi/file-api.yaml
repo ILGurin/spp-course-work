@@ -1,0 +1,211 @@
+openapi: 3.0.0
+info:
+  title: Files API
+  description: REST API для взаимодействия с File сервисом.
+  version: 1.0.0
+
+paths:
+  /v1/files:
+    post:
+      summary: Загрузка файлов
+      operationId: "uploadFiles"
+      tags:
+        - File
+      parameters:
+        - in: query
+          name: userId
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: ID пользователя
+        - in: query
+          name: directoryId
+          required: false
+          schema:
+            type: string
+            format: uuid
+          description: ID папки
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [ files ]
+              properties:
+                files:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+      responses:
+        '201':
+          description: Успешная загрузка файлов
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FileUploadResponseDto'
+    get:
+      summary: Получить файлы пользователя
+      operationId: "findAllByUserId"
+      tags:
+        - File
+      parameters:
+        - in: query
+          name: userId
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - in: query
+          name: directoryId
+          required: false
+          schema:
+            type: string
+            format: uuid
+        - in: query
+          name: limit
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+        - in: query
+          name: offset
+          required: false
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+      responses:
+        '200':
+          description: Успешно найдены файлы
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FilePageDto'
+  /v1/files/{id}:
+    get:
+      summary: Получить файл по ID
+      operationId: "findById"
+      tags:
+        - File
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Успешно найден файл
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FileDto'
+    delete:
+      summary: Удаление файла (soft delete)
+      operationId: "delete"
+      tags:
+        - File
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Успешно удален файл
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FileDeleteResponseDto'
+
+  /v1/files/download/{id}:
+    get:
+      summary: Скачать файл по ID
+      operationId: "downloadFile"
+      tags:
+        - File
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Файл успешно скачан
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+
+components:
+  schemas:
+    FileUploadResponseDto:
+      type: object
+      required: [ files ]
+      properties:
+        files:
+          type: array
+          items:
+            $ref: '#/components/schemas/FileDto'
+
+    FileDeleteResponseDto:
+      type: object
+      required: [ id ]
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: ID удаленного файла
+
+    FileDto:
+      type: object
+      required: [ id, userId, directoryId, fileName, fileSize, mimeType ]
+      properties:
+        id:
+          type: string
+          format: uuid
+        userId:
+          type: string
+          format: uuid
+        directoryId:
+          type: string
+          format: uuid
+        fileName:
+          type: string
+        fileSize:
+          type: integer
+          description: Размер файла в байтах
+        mimeType:
+          type: string
+          description: MIME тип файла
+        downloadUrl:
+          type: string
+          description: URL для скачивания файла
+
+    FilePageDto:
+      type: object
+      required: [ items, total ]
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/FileDto'
+        total:
+          type: integer
+          description: Общее количество файлов
+        limit:
+          type: integer
+        offset:
+          type: integer
+

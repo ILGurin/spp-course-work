@@ -1,10 +1,13 @@
 package by.cloud.api.config;
 
+import feign.Request;
 import org.apache.http.HttpHeaders;
 import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
+import org.springframework.cloud.openfeign.support.SpringEncoder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
+import org.springframework.http.converter.support.AllEncompassingFormHttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -27,5 +30,11 @@ public class AppConfig {
     @Bean
     public HttpMessageConverters httpMessageConverters() {
         return new HttpMessageConverters();
+    }
+
+    @Bean
+    public Request.Options feignRequestOptions() {
+        // Увеличиваем таймауты для загрузки больших файлов
+        return new Request.Options(60000, 60000);
     }
 }

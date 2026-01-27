@@ -1,73 +1,62 @@
-# React + TypeScript + Vite
+# Cloud Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Современный фронтенд для облачного хранилища файлов.
 
-Currently, two official plugins are available:
+## Возможности
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- 🔐 Аутентификация и регистрация пользователей
+- 📁 Управление папками и директориями
+- 📤 Загрузка нескольких файлов одновременно
+- ⬇️ Скачивание файлов
+- 🗑️ Удаление файлов и папок
+- 🎨 Современный и красивый UI/UX
 
-## React Compiler
+## Технологии
 
-The React Compiler is currently not compatible with SWC. See [this issue](https://github.com/vitejs/vite-plugin-react/issues/428) for tracking the progress.
+- React 19
+- TypeScript
+- React Router DOM
+- Vite
 
-## Expanding the ESLint configuration
+## Установка
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
+# или
+bun install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Запуск
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm run dev
+# или
+bun run dev
 ```
+
+Приложение будет доступно по адресу `http://localhost:5173`
+
+## Настройка
+
+Создайте файл `.env` в корне проекта:
+
+```env
+VITE_API_URL=http://localhost:8091
+```
+
+## Использование
+
+1. Зарегистрируйтесь или войдите в систему
+2. Создайте папки для организации файлов
+3. Загружайте файлы (поддерживается множественная загрузка)
+4. Управляйте своими файлами и папками
+
+## API
+
+Фронтенд работает через API Gateway на порту 8091 и использует следующие эндпоинты:
+
+- `/v1/auth/login` - Вход
+- `/v1/auth/registration` - Регистрация
+- `/v1/auth/me` - Информация о пользователе
+- `/v1/files` - Работа с файлами
+- `/v1/directories` - Работа с директориями

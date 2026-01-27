@@ -262,8 +262,6 @@ services:
     environment:
       POSTGRES_HOST: file-postgres
       POSTGRES_PORT: 5432
-      REDIS_HOST: redis
-      REDIS_PORT: 6379
       MINIO_ENDPOINT: http://minio:9000
       MINIO_ACCESS_KEY: minioadmin
       MINIO_SECRET_KEY: minioadmin
@@ -273,8 +271,6 @@ services:
       OTLP_EXPORTER_ENDPOINT: http://tempo:4318
     depends_on:
       file-postgres:
-        condition: service_healthy
-      redis:
         condition: service_healthy
       minio:
         condition: service_healthy
@@ -296,6 +292,8 @@ services:
       PERSONS_API_HOST: persons-api
       PERSONS_API_URL: http://persons-api:8092
       FILE_API_URL: http://files-api:8093
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
       OTLP_EXPORTER_ENDPOINT: http://tempo:4318
     ports:
       - "8091:8091"
@@ -303,6 +301,8 @@ services:
       persons-api:
         condition: service_healthy
       files-api:
+        condition: service_healthy
+      redis:
         condition: service_healthy
     healthcheck:
       test: [ "CMD-SHELL", "curl", "-fsS http://localhost:8091/actuator/health || exit 1" ]

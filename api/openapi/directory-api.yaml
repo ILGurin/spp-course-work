@@ -1,0 +1,197 @@
+openapi: 3.0.0
+info:
+  title: Directories API
+  description: REST API для взаимодействия с каталогами файлов.
+  version: 1.0.0
+
+paths:
+  /v1/directories:
+    post:
+      summary: Создание каталога
+      operationId: "createDirectory"
+      tags:
+        - Directory
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DirectoryWriteDto'
+      responses:
+        '201':
+          description: Успешное создание каталога
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DirectoryWriteResponseDto'
+    get:
+      summary: Получить список каталогов
+      operationId: "findAllDirectories"
+      tags:
+        - Directory
+      parameters:
+        - in: query
+          name: userId
+          required: false
+          schema:
+            type: string
+            format: uuid
+        - in: query
+          name: parentId
+          required: false
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Успешно найдены каталоги
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DirectoryPageDto'
+
+  /v1/directories/{id}:
+    get:
+      summary: Получить каталог по ID
+      operationId: "findDirectoryById"
+      tags:
+        - Directory
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Успешно найден каталог
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DirectoryDto'
+    put:
+      summary: Обновить каталог
+      operationId: "updateDirectory"
+      tags:
+        - Directory
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DirectoryWriteDto'
+      responses:
+        '200':
+          description: Успешно обновлен каталог
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DirectoryWriteResponseDto'
+    delete:
+      summary: Удалить каталог (soft delete)
+      operationId: "deleteDirectory"
+      tags:
+        - Directory
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Успешно удален каталог
+
+  /v1/directories/initialize/{userId}:
+    post:
+      summary: Создание базовой директории для созданного пользователя
+      operationId: "createBaseDirectory"
+      tags:
+        - Directory
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '201':
+          description: Базовая директория успешно создана
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DirectoryWriteResponseDto'
+        '409':
+          description: Базовая директория уже существует для данного пользователя
+
+
+
+components:
+  schemas:
+    DirectoryWriteResponseDto:
+      type: object
+      required: [ id ]
+      properties:
+        id:
+          type: string
+          format: uuid
+
+    DirectoryWriteDto:
+      type: object
+      required: [ userId, name ]
+      properties:
+        userId:
+          type: string
+          format: uuid
+        parentId:
+          type: string
+          format: uuid
+          nullable: true
+        name:
+          type: string
+          maxLength: 255
+        path:
+          type: string
+          maxLength: 2048
+          nullable: true
+
+    DirectoryDto:
+      type: object
+      required: [ userId, name ]
+      properties:
+        id:
+          type: string
+          format: uuid
+        userId:
+          type: string
+          format: uuid
+        parentId:
+          type: string
+          format: uuid
+          nullable: true
+        name:
+          type: string
+          maxLength: 255
+        path:
+          type: string
+          maxLength: 2048
+          nullable: true
+
+    DirectoryPageDto:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/DirectoryDto'
+

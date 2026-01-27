@@ -60,7 +60,8 @@ public class SecurityConfig {
                         ).permitAll()
                         //USER
                         .pathMatchers("/v1/auth/me").hasAuthority("ROLE_individual.user")
-                        .pathMatchers("/v1/files/**", "/v1/folders/**").hasAuthority("ROLE_individual.user")
+                        .pathMatchers("/v1/auth/logout").hasAuthority("ROLE_individual.user")
+                        .pathMatchers("/v1/files/**", "/v1/directories/**").hasAuthority("ROLE_individual.user")
                         .anyExchange().authenticated()
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2
